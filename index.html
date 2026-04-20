@@ -1,0 +1,367 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1A73E8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>IJK Smart Attendance Pro</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="assets/icon-192.png" />
+
+  <!-- Google Fonts: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- GLOBAL LOADER -->
+  <div id="global-loader">
+    <div class="loader-rings">
+      <div class="loader-ring loader-ring-1"></div>
+      <div class="loader-ring loader-ring-2"></div>
+      <div class="loader-ring loader-ring-3"></div>
+      <div class="loader-logo-center">
+        <span class="logo-i">I</span><span class="logo-j">J</span><span class="logo-k">K</span>
+      </div>
+    </div>
+    <div class="loader-bar"><div class="loader-fill"></div></div>
+    <p class="loader-text">Smart Attendance Pro</p>
+    <div class="loader-dots"><span></span><span></span><span></span></div>
+    <div class="loader-tagline">IJK COACHING CENTER</div>
+  </div>
+
+  <!-- APP SHELL -->
+  <div id="app" class="hidden">
+
+    <!-- TOP NAV BAR -->
+    <header id="top-nav" class="hidden">
+      <div class="nav-left">
+        <button id="btn-menu" aria-label="Menu">&#9776;</button>
+        <div class="nav-brand">
+          <span class="brand-ijk">IJK</span>
+          <span class="brand-sub">Attendance Pro</span>
+        </div>
+      </div>
+      <div class="nav-right">
+        <button id="btn-dark-mode" title="Toggle Dark Mode" aria-label="Dark Mode">🌙</button>
+        <div id="user-avatar" title="Profile"></div>
+        <button id="btn-logout" class="btn-icon-red" title="Logout">⏻</button>
+      </div>
+    </header>
+
+    <!-- SIDE DRAWER -->
+    <aside id="side-drawer">
+      <div class="drawer-header">
+        <div id="drawer-user-info">
+          <div id="drawer-avatar"></div>
+          <div>
+            <div id="drawer-name">—</div>
+            <div id="drawer-role-badge">—</div>
+          </div>
+        </div>
+        <button id="btn-close-drawer">✕</button>
+      </div>
+      <nav id="drawer-nav"></nav>
+    </aside>
+    <div id="drawer-overlay"></div>
+
+    <!-- ANNOUNCEMENT TICKER -->
+    <div id="announcement-bar" class="hidden">
+      <span class="announce-label">📢 Notice</span>
+      <div class="announce-track"><span id="announce-text"></span></div>
+    </div>
+
+    <!-- PAGE ROUTER -->
+    <main id="page-container">
+
+      <!-- PAGE: LOGIN -->
+      <section id="page-login" class="page active">
+        <div class="login-bg"></div>
+        <div class="login-card">
+          <div class="login-logo">
+            <span>I</span><span>J</span><span>K</span>
+          </div>
+          <h1>Smart Attendance Pro</h1>
+          <p class="login-tagline">IJK Coaching Center – Secure Teacher Portal</p>
+          <form id="login-form" novalidate>
+            <div class="field-group">
+              <label for="login-email">Email Address</label>
+              <input type="email" id="login-email" placeholder="teacher@ijk.edu" autocomplete="username" required />
+            </div>
+            <div class="field-group">
+              <label for="login-password">Password</label>
+              <div class="password-wrap">
+                <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" required />
+                <button type="button" class="toggle-pw" data-target="login-password">👁</button>
+              </div>
+            </div>
+            <div id="login-error" class="form-error hidden"></div>
+            <button type="submit" class="btn-primary btn-full" id="btn-login">
+              <span class="btn-text">Login Securely</span>
+              <span class="btn-spinner hidden"></span>
+            </button>
+          </form>
+          <p class="login-footer">Forgot password? Contact your admin.</p>
+        </div>
+      </section>
+
+      <!-- PAGE: TEACHER DASHBOARD -->
+      <section id="page-teacher-dashboard" class="page">
+        <div class="page-header">
+          <h2 id="teacher-greeting">Good morning!</h2>
+          <p id="teacher-date-display" class="muted-text"></p>
+        </div>
+
+        <div id="active-slot-banner" class="slot-banner hidden">
+          <span class="slot-icon">🕐</span>
+          <div>
+            <div class="slot-label">Current Slot</div>
+            <div id="active-slot-name" class="slot-name">—</div>
+            <div id="active-slot-time" class="slot-time">—</div>
+          </div>
+          <div id="slot-status-pill" class="slot-pill">Active</div>
+        </div>
+
+        <div class="checkin-zone">
+          <button id="btn-checkin" class="mega-checkin" aria-label="Check In">
+            <div class="checkin-pulse"></div>
+            <div class="checkin-inner">
+              <span class="checkin-icon">✓</span>
+              <span class="checkin-label">TAP TO CHECK IN</span>
+              <span id="checkin-status-text" class="checkin-status">Ready</span>
+            </div>
+          </button>
+          <p id="checkin-hint" class="checkin-hint">GPS verification will run automatically.</p>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">📋 Today's Record</div>
+          <div id="today-records" class="records-list">
+            <div class="empty-state">No check-ins yet today.</div>
+          </div>
+        </div>
+
+        <button class="btn-secondary btn-full mt-2" id="btn-open-leave">
+          🏖 Apply for Leave
+        </button>
+
+        <div id="timetable-section" class="card mt-2 hidden">
+          <div class="card-header">📅 Timetable</div>
+          <img id="timetable-img" src="" alt="Timetable" class="timetable-img" />
+        </div>
+      </section>
+
+      <!-- PAGE: ADMIN DASHBOARD -->
+      <section id="page-admin-dashboard" class="page">
+        <div class="page-header">
+          <h2>Admin Command Center</h2>
+          <p class="muted-text" id="admin-date"></p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">📊 Today's Snapshot</div>
+          <div id="analytics-summary" class="analytics-row">
+            <div class="stat-box green"><div class="stat-num" id="stat-present">—</div><div>Present</div></div>
+            <div class="stat-box red"><div class="stat-num" id="stat-absent">—</div><div>Absent</div></div>
+            <div class="stat-box amber"><div class="stat-num" id="stat-late">—</div><div>Late</div></div>
+            <div class="stat-box blue"><div class="stat-num" id="stat-leave">—</div><div>On Leave</div></div>
+          </div>
+          <canvas id="attendance-chart" height="180"></canvas>
+        </div>
+
+        <div class="quick-actions-grid mt-3">
+          <button class="qa-btn" data-page="page-manage-teachers"><span class="qa-icon">👥</span><span>Teachers</span></button>
+          <button class="qa-btn" data-page="page-manage-slots"><span class="qa-icon">⏰</span><span>Slots</span></button>
+          <button class="qa-btn" data-page="page-manage-locations"><span class="qa-icon">📍</span><span>Locations</span></button>
+          <button class="qa-btn" data-page="page-announcements"><span class="qa-icon">📢</span><span>Notices</span></button>
+          <button class="qa-btn" data-page="page-leave-requests"><span class="qa-icon">🏖</span><span>Leaves</span></button>
+          <button class="qa-btn" data-page="page-reports"><span class="qa-icon">📄</span><span>Reports</span></button>
+          <button class="qa-btn" data-page="page-upload-timetable"><span class="qa-icon">🖼</span><span>Timetable</span></button>
+          <button class="qa-btn" data-page="page-subadmin"><span class="qa-icon">🔑</span><span>Sub-Admins</span></button>
+        </div>
+
+        <div class="card mt-3">
+          <div class="card-header">🔴 Live Feed Today</div>
+          <div id="live-feed" class="records-list">
+            <div class="empty-state">Loading…</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE: MANAGE TEACHERS -->
+      <section id="page-manage-teachers" class="page">
+        <div class="page-header with-back">
+          <button class="btn-back" data-back="page-admin-dashboard">← Back</button>
+          <h2>Teacher Management</h2>
+        </div>
+        <button class="btn-primary btn-full mb-3" id="btn-add-teacher">+ Add New Teacher</button>
+        <div id="teachers-list" class="list-container">Loading…</div>
+      </section>
+
+      <!-- PAGE: MANAGE SLOTS -->
+      <section id="page-manage-slots" class="page">
+        <div class="page-header with-back">
+          <button class="btn-back" data-back="page-admin-dashboard">← Back</button>
+          <h2>Time Slot Management</h2>
+        </div>
+        <button class="btn-primary btn-full mb-3" id="btn-add-slot">+ Add New Slot</button>
+        <div id="slots-list" class="list-container">Loading…</div>
+      </section>
+
+      <!-- PAGE: MANAGE LOCATIONS -->
+      <section id="page-manage-locations" class="page">
+        <div class="page-header with-back">
+          <button class="btn-back" data-back="page-admin-dashboard">← Back</button>
+          <h2>GPS Location Management</h2>
+        </div>
+        <button class="btn-primary btn-full mb-3" id="btn-add-location">+ Add New Location</button>
+        <div id="locations-list" class="list-container">Loading…</div>
+      </section>
+
+      <!-- PAGE: ANNOUNCEMENTS -->
+      <section id="page-announcements" class="page">
+        <div class="page-header with-back">
+          <button class="btn-back" data-back="page-admin-dashboard">← Back</button>
+          <h2>Announcement Board</h2>
+        </div>
+        <div class="card mb-3">
+          <textarea id="announcement-text" rows="3" placeholder="Type today's notice…" class="textarea-field"></textarea>
+          <button class="btn-primary btn-full mt-2" id="btn-post-announcement">📢 Post Announcement</button>
+        </div>
+        <div id="announcements-list" class="list-container"></div>
+      </section>
+
+      <!-- PAGE: LEAVE REQUESTS -->
+      <section id="page-leave-requests" class="page">
+        <div class="page-header with-back">
+          <button class="btn-back" data-back="page-admin-dashboard">← Back</button>
+          <h2>Leave Requests</h2>
+        </div>
+        <div id="leave-requests-list" class="list-container">Loading…</div>
+      </section>
+
+      <!-- PAGE: REPORTS -->
+      <section id="page-reports" class="page">
+        <div class="page-header with-back">
+          <button class="btn-back" data-back="page-admin-dashboard">← Back</button>
+          <h2>Attendance Reports</h2>
+        </div>
+        <div class="card">
+          <div class="field-group">
+            <label>Teacher</label>
+            <select id="report-teacher-select" class="select-field"></select>
+          </div>
+          <div class="field-group">
+            <label>Month</label>
+            <input type="month" id="report-month" class="input-field" />
+          </div>
+          <div class="btn-row mt-2">
+            <button class="btn-primary" id="btn-export-pdf">📄 Export PDF</button>
+            <button class="btn-secondary" id="btn-export-excel">📊 Export Excel</button>
+          </div>
+        </div>
+        <div id="report-preview" class="mt-3"></div>
+      </section>
+
+      <!-- PAGE: UPLOAD TIMETABLE -->
+      <section id="page-upload-timetable" class="page">
+        <div class="page-header with-back">
+          <button class="btn-back" data-back="page-admin-dashboard">← Back</button>
+          <h2>Upload Timetable</h2>
+        </div>
+        <div class="card">
+          <label class="upload-label" for="timetable-upload">
+            <span class="upload-icon">🖼</span>
+            <span>Click or drag to upload timetable image</span>
+            <input type="file" id="timetable-upload" accept="image/*" class="hidden" />
+          </label>
+          <div id="upload-preview" class="upload-preview hidden">
+            <img id="upload-preview-img" src="" alt="Preview" />
+            <button class="btn-primary mt-2" id="btn-save-timetable">💾 Save Timetable</button>
+          </div>
+          <div id="upload-progress" class="progress-bar hidden"><div class="progress-fill"></div></div>
+        </div>
+      </section>
+
+      <!-- PAGE: SUB-ADMIN MANAGEMENT -->
+      <section id="page-subadmin" class="page">
+        <div class="page-header with-back">
+          <button class="btn-back" data-back="page-admin-dashboard">← Back</button>
+          <h2>Sub-Admin Management</h2>
+        </div>
+        <button class="btn-primary btn-full mb-3" id="btn-add-subadmin">+ Create Sub-Admin</button>
+        <div id="subadmin-list" class="list-container">Loading…</div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- GLOBAL MODALS -->
+  <div id="modal-overlay" class="hidden">
+    <div id="modal-box">
+      <div id="modal-header">
+        <h3 id="modal-title">—</h3>
+        <button id="modal-close">✕</button>
+      </div>
+      <div id="modal-body"></div>
+      <div id="modal-footer">
+        <button class="btn-secondary" id="modal-cancel">Cancel</button>
+        <button class="btn-primary"   id="modal-confirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Leave Modal -->
+  <div id="leave-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Apply for Leave</h3>
+        <button class="modal-close" data-close="leave-modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="field-group">
+          <label>Leave Date</label>
+          <input type="date" id="leave-date" class="input-field" />
+        </div>
+        <div class="field-group">
+          <label>Reason</label>
+          <textarea id="leave-reason" rows="3" class="textarea-field" placeholder="Briefly explain…"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close="leave-modal">Cancel</button>
+        <button class="btn-primary" id="btn-submit-leave">Submit Request</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOCAL LIBRARIES -->
+  <script src="lib/chart.js"></script>
+
+  <!-- App -->
+  <script type="module" src="app.js"></script>
+
+  <!-- Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('SW registered:', reg.scope))
+          .catch(err => console.warn('SW failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>
